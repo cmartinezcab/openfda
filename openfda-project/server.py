@@ -8,8 +8,6 @@ import requests
 IP = "127.0.0.1"  # Localhost means "I": your local machine
 PORT = 8000
 
-
-
 # HTTPRequestHandler class
 class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     # GET
@@ -52,43 +50,40 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 except (ValueError, IndexError):
                     limite=10
 
-
-                #print(limite)
-                #print(self.path)
                 med ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+medicamento+"&limit="+str(limite)
                 enlace = requests.get(med)
                 contenido = enlace.json()
-                #print(contenido)
 
                 primero= """
                 <!DOCTYPE html>
                 <html>
                 <body>
 
-                <ul style="list-style-type:square;">
+                <ol>
                 """
                 ultimo= """
-                </ul>
+                </ol>
                 </body>
                 </html>
                 """
 
                 lista=[]
+
                 for i in range(limite):
                     try:
                         resultado=contenido["results"][i]["openfda"]["generic_name"]
-                        #print(resultado)
-                        for item in resultado:
-                            lista.append('<li>'+str(item)+'</li>')
+                        for elem in resultado:
+                            lista.append(elem)
+
                     except KeyError:
-                        lista.append('<li>'+'Nombre no encontrado'+'</li>')
-                    for elem in lista:
-                        element=str(elem)
-                        fin= primero+element+ultimo
-                    self.wfile.write(bytes(fin, "utf8"))
+                        lista.append('Nombre no encontrado')
+                lista_respuesta=''
+                for element in lista:
+                    lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                fin=primero+'\n'+lista_respuesta+ultimo
+                self.wfile.write(bytes(fin, "utf8"))
+
             return
-
-
 
 
         #COMPAÑIAS
@@ -117,6 +112,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 #print(company)
                 try:
                     limite= int(path[1].lstrip(path[1][:6]))
+                    if limite=='':
+                        limite='10'
 
                 except (ValueError, IndexError):
                     limite=10
@@ -130,10 +127,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <html>
                 <body>
 
-                <ul style="list-style-type:square;">
+                <ol>
                 """
                 ultimo= """
-                </ul>
+                </ol>
                 </body>
                 </html>
                 """
@@ -141,21 +138,21 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 for i in range(limite):
                     try:
                         resultado = contenido["results"][i]["openfda"]["manufacturer_name"]
-                        print(resultado)
 
                         for item in resultado:
-                            lista.append('<li>'+str(item)+'</li>')
+                            lista.append(item)
                     except KeyError:
-                        lista.append('<li>'+'Empresa no encontrada'+'</li>')
-                    for elem in lista:
-                        element=str(elem)
-                        fin= primero+element+ultimo
-                    self.wfile.write(bytes(fin, "utf8"))
+                        lista.append('Empresa no encontrada')
+                lista_respuesta=''
+                for element in lista:
+                    lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                fin=primero+'\n'+lista_respuesta+ultimo
+                self.wfile.write(bytes(fin, "utf8"))
             return
 
 
         #LISTA DE MEDICAMENTOS
-        def Lista_Medicamentos(limite=10):
+        def Lista_Medicamentos():
             if self.path=='/':
                 message = """
                 <!DOCTYPE html>
@@ -190,10 +187,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <html>
                 <body>
 
-                <ul style="list-style-type:square;">
+                <ol>
                 """
                 ultimo= """
-                </ul>
+                </ol>
                 </body>
                 </html>
                 """
@@ -201,14 +198,15 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 for i in range(limite):
                     try:
                         resultado = contenido['results'][i]["term"]
-                        print(resultado)
-                        lista.append('<li>'+str(resultado)+'</li>')
+                        lista.append(resultado)
                     except KeyError:
-                        lista.append('<li>'+'Medicamento no encontrado'+'</li>')
-                    for elem in lista:
-                        element=str(elem)
-                        fin= primero+element+ultimo
-                    self.wfile.write(bytes(fin, "utf8"))
+                        lista.append('Medicamento no encontrado')
+
+                lista_respuesta=''
+                for element in lista:
+                    lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                fin=primero+'\n'+lista_respuesta+ultimo
+                self.wfile.write(bytes(fin, "utf8"))
             return
 
 
@@ -248,10 +246,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <html>
                 <body>
 
-                <ul style="list-style-type:square;">
+                <ol>
                 """
                 ultimo= """
-                </ul>
+                </ol>
                 </body>
                 </html>
                 """
@@ -259,16 +257,17 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 for i in range(limite):
                     try:
                         resultado = contenido['results'][i]["term"]
-                        lista.append('<li>'+str(resultado)+'</li>')
+                        lista.append(resultado)
                     except KeyError:
-                        lista.append('<li>'+'Empresa no encontrada'+'</li>')
-                    for elem in lista:
-                        element=str(elem)
-                        fin= primero+element+ultimo
-                    self.wfile.write(bytes(fin, "utf8"))
+                        lista.append('Empresa no encontrada')
+                lista_respuesta=''
+                for element in lista:
+                    lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                fin=primero+'\n'+lista_respuesta+ultimo
+                self.wfile.write(bytes(fin, "utf8"))
             return
 
-
+        #LISTA DE PRECAUCIONES
         def Warnings():
             if self.path == '/':
                 message = """
@@ -304,10 +303,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <html>
                 <body>
 
-                <ul style="list-style-type:square;">
+                <ol>
                 """
                 ultimo= """
-                </ul>
+                </ol>
                 </body>
                 </html>
                 """
@@ -317,13 +316,14 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     try:
                         resultado = contenido['results'][i]["warnings"]
                         for item in resultado:
-                            lista.append('<li>'+str(item)+'</li>')
+                            lista.append(item)
                     except KeyError:
-                        lista.append('<li>'+'Precaucion no encontrada'+'</li>')
-                    for elem in lista:
-                        element=str(elem)
-                        fin= primero+element+ultimo
-                    self.wfile.write(bytes(fin, "utf8"))
+                        lista.append('Precaucion no encontrada')
+                lista_respuesta=''
+                for element in lista:
+                    lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                fin=primero+'\n'+lista_respuesta+ultimo
+                self.wfile.write(bytes(fin, "utf8"))
             return
 
         Medicamento()
@@ -331,9 +331,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         Lista_Medicamentos()
         Lista_Empresas()
         Warnings()
-
-
-
 
         print("File served!")
         return
