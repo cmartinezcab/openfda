@@ -68,14 +68,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 """
 
                 lista=[]
-
                 for i in range(limite):
                     try:
                         resultado=contenido["results"][i]["openfda"]["generic_name"]
                         for elem in resultado:
                             lista.append(elem)
 
-                    except KeyError:
+                    except (KeyError, IndexError):
                         lista.append('Nombre no encontrado')
                 lista_respuesta=''
                 for element in lista:
@@ -112,8 +111,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 #print(company)
                 try:
                     limite= int(path[1].lstrip(path[1][:6]))
-                    if limite=='':
-                        limite='10'
+
 
                 except (ValueError, IndexError):
                     limite=10
@@ -135,13 +133,12 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 </html>
                 """
                 lista=[]
-                for i in range(limite):
+                for i in range(0, limite):
                     try:
                         resultado = contenido["results"][i]["openfda"]["manufacturer_name"]
-
                         for item in resultado:
                             lista.append(item)
-                    except KeyError:
+                    except (KeyError, IndexError):
                         lista.append('Empresa no encontrada')
                 lista_respuesta=''
                 for element in lista:
@@ -199,7 +196,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     try:
                         resultado = contenido['results'][i]["term"]
                         lista.append(resultado)
-                    except KeyError:
+                    except (KeyError, IndexError):
                         lista.append('Medicamento no encontrado')
 
                 lista_respuesta=''
@@ -258,7 +255,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     try:
                         resultado = contenido['results'][i]["term"]
                         lista.append(resultado)
-                    except KeyError:
+                    except (KeyError, IndexError):
                         lista.append('Empresa no encontrada')
                 lista_respuesta=''
                 for element in lista:
@@ -317,7 +314,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         resultado = contenido['results'][i]["warnings"]
                         for item in resultado:
                             lista.append(item)
-                    except KeyError:
+                    except (KeyError, IndexError):
                         lista.append('Precaucion no encontrada')
                 lista_respuesta=''
                 for element in lista:
