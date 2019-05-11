@@ -115,12 +115,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 path = self.path.split('?')
                 path_1=path[1].split('&')
                 path_2=path_1[0].split('=')
-                print('path', path)
-                print('path_1', path_1)
-                print('path_2"', path_2)
                 company=path_2[1]
-
-                print('medicamento', company)
+                
                 try:
                     limite= path_1[1].split('=')
                     if limite[1]=="":
