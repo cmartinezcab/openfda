@@ -64,7 +64,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     limite="&limit=10"
 
 
-                med ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+medicamento+limite
+                med ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+medicamento+str(limite)
                 enlace = requests.get(med)
                 contenido = enlace.json()
 
