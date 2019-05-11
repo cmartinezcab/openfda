@@ -42,19 +42,12 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             elif self.path.startswith("/searchDrug?"):
                 path = self.path.split('?')
-                #print(path)
                 path_1=path[1].split('&')
                 path_2=path_1[0].split('=')
-                print('path', path)
-                print('path_1', path_1)
-                print('path_2"', path_2)
                 medicamento=path_2[1]
 
-                print('medicamento', medicamento)
-                #print( path_1[1].split('='))
                 try:
                     limite= path_1[1].split('=')
-                    print('limite', limite[1])
                     if limite[1]=="":
                         limite='&limit=10'
                     else:
@@ -89,13 +82,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
                     except (KeyError, IndexError):
                         lista.append('Nombre no encontrado')
-                #print(lista)
                 lista_respuesta=''
                 for element in lista:
                     lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
-                #print(lista_respuesta)
                 fin=primero+'\n'+lista_respuesta+ultimo
-                #print(fin)
                 self.wfile.write(bytes(fin, "utf8"))
 
             return
@@ -123,7 +113,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             elif self.path.startswith("/searchCompany?"):
                 path = self.path.split('?')
-                #print(path)
                 path_1=path[1].split('&')
                 path_2=path_1[0].split('=')
                 print('path', path)
@@ -132,10 +121,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 company=path_2[1]
 
                 print('medicamento', company)
-                #print( path_1[1].split('='))
                 try:
                     limite= path_1[1].split('=')
-                    print('limite', limite[1])
                     if limite[1]=="":
                         limite='&limit=10'
                     else:
