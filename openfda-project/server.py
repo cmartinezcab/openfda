@@ -41,16 +41,30 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
             elif self.path.startswith("/searchDrug?"):
-                path = self.path.split('&')
-                medicamento = path[0].lstrip(self.path[:29])
-                #print(medicamento)
+                path = self.path.split('?')
+                #print(path)
+                path_1=path[1].split('&')
+                path_2=path_1[0].split('=')
+                print('path', path)
+                print('path_1', path_1)
+                print('path_2"', path_2)
+                medicamento=path_2[1]
+
+                print('medicamento', medicamento)
+                #print( path_1[1].split('='))
                 try:
-                    limite= int(path[1].lstrip(path[1][:6]))
+                    limite= path_1[1].split('=')
+                    print('limite', limite[1])
+                    if limite[1]=="":
+                        limite='&limit=10'
+                    else:
+                        limite="&limit="+limite[1]
 
-                except (ValueError, IndexError):
-                    limite=10
+                except IndexError:
+                    limite="&limit=10"
 
-                med ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+medicamento+"&limit="+str(limite)
+
+                med ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+medicamento+limite
                 enlace = requests.get(med)
                 contenido = enlace.json()
 
@@ -58,7 +72,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <!DOCTYPE html>
                 <html>
                 <body>
-
                 <ol>
                 """
                 ultimo= """
@@ -68,18 +81,21 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 """
 
                 lista=[]
-                for i in range(limite):
+                for result in contenido["results"]:
                     try:
-                        resultado=contenido["results"][i]["openfda"]["generic_name"]
+                        resultado=result["openfda"]["generic_name"]
                         for elem in resultado:
                             lista.append(elem)
 
                     except (KeyError, IndexError):
                         lista.append('Nombre no encontrado')
+                #print(lista)
                 lista_respuesta=''
                 for element in lista:
                     lista_respuesta+='  <li>'+str(element)+'</li>'+'\n'
+                #print(lista_respuesta)
                 fin=primero+'\n'+lista_respuesta+ultimo
+                #print(fin)
                 self.wfile.write(bytes(fin, "utf8"))
 
             return
@@ -106,17 +122,29 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(bytes(message, "utf8"))
 
             elif self.path.startswith("/searchCompany?"):
-                path = self.path.split('&')
-                company = path[0].lstrip(self.path[:20])
-                #print(company)
+                path = self.path.split('?')
+                #print(path)
+                path_1=path[1].split('&')
+                path_2=path_1[0].split('=')
+                print('path', path)
+                print('path_1', path_1)
+                print('path_2"', path_2)
+                company=path_2[1]
+
+                print('medicamento', company)
+                #print( path_1[1].split('='))
                 try:
-                    limite= int(path[1].lstrip(path[1][:6]))
+                    limite= path_1[1].split('=')
+                    print('limite', limite[1])
+                    if limite[1]=="":
+                        limite='&limit=10'
+                    else:
+                        limite="&limit="+limite[1]
 
+                except IndexError:
+                    limite="&limit=10"
 
-                except (ValueError, IndexError):
-                    limite=10
-
-                comp ="https://api.fda.gov/drug/label.json?search=active_ingredient:"+company+"&limit="+str(limite)
+                comp ="https://api.fda.gov/drug/label.json?search=openfda.manufacturer_name:"+company+str(limite)
                 enlace = requests.get(comp)
                 contenido = enlace.json()
 
@@ -124,7 +152,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <!DOCTYPE html>
                 <html>
                 <body>
-
                 <ol>
                 """
                 ultimo= """
@@ -133,9 +160,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 </html>
                 """
                 lista=[]
-                for i in range(0, limite):
+                for result in contenido["results"]:
                     try:
-                        resultado = contenido["results"][i]["openfda"]["manufacturer_name"]
+                        resultado = result["openfda"]["manufacturer_name"]
                         for item in resultado:
                             lista.append(item)
                     except (KeyError, IndexError):
@@ -183,7 +210,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <!DOCTYPE html>
                 <html>
                 <body>
-
                 <ol>
                 """
                 ultimo= """
@@ -242,7 +268,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <!DOCTYPE html>
                 <html>
                 <body>
-
                 <ol>
                 """
                 ultimo= """
@@ -299,7 +324,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 <!DOCTYPE html>
                 <html>
                 <body>
-
                 <ol>
                 """
                 ultimo= """
@@ -347,4 +371,5 @@ print("Server stopped!")
 
 socketserver.TCPServer.allow_reuse_address = True
 
+# https://github.com/joshmaker/simple-python-webserver/blob/master/server.py
 # https://github.com/joshmaker/simple-python-webserver/blob/master/server.py
